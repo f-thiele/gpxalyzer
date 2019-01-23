@@ -1,0 +1,8 @@
+[package]
+name = "gpxalyzer"
+version = "0.1.0"
+authors = ["Fabian Thiele <fabian.thiele@posteo.de>"]
+edition = "2018"
+
+[dependencies]
+gpx = "0.6"
