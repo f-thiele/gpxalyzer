@@ -28,6 +28,40 @@ pub fn decorate_speed(ts: &TrackSegment) -> Result<&TrackSegment, &'static str> 
 }
 
 
+pub fn get_range_lattitude(ts: &TrackSegment) -> ([f64; 2]) {
+    let mut max_lat = ts.points[0].point().lat();
+    let mut min_lat = max_lat;
+
+    for n in &ts.points {
+        let lat = n.point().lat();
+        if max_lat < lat {
+            max_lat = lat;
+        } else if min_lat > lat {
+            min_lat = lat;
+        }
+    }
+
+    [min_lat, max_lat]
+}
+
+
+pub fn get_range_longitude(ts: &TrackSegment) -> ([f64; 2]) {
+    let mut max_lng = ts.points[0].point().lng();
+    let mut min_lng = max_lng;
+
+    for n in &ts.points {
+        let lng = n.point().lng();
+        if max_lng < lng {
+            max_lng = lng;
+        } else if min_lng > lng {
+            min_lng = lng;
+        }
+    }
+
+    [min_lng, max_lng]
+}
+
+
 pub fn get_lattitude(ts: &TrackSegment) -> (std::vec::Vec<f64>) {
     let mut lat = std::vec::Vec::new();
 
