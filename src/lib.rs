@@ -18,6 +18,7 @@
 extern crate gpx;
 
 use gpx::{Waypoint, TrackSegment};
+use chrono::{DateTime, Utc};
 
 pub fn decorate_speed(ts: &TrackSegment) -> Result<&TrackSegment, &'static str> {
     for wp in &ts.points {
@@ -25,6 +26,51 @@ pub fn decorate_speed(ts: &TrackSegment) -> Result<&TrackSegment, &'static str> 
     }
     return Ok(ts);
 }
+
+
+pub fn get_lattitude(ts: &TrackSegment) -> (std::vec::Vec<f64>) {
+    let mut lat = std::vec::Vec::new();
+
+    for n in &ts.points {
+        lat.push(n.point().lat());
+    }
+
+    lat
+}
+
+
+pub fn get_longitude(ts: &TrackSegment) -> (std::vec::Vec<f64>) {
+    let mut lng = std::vec::Vec::new();
+
+    for n in &ts.points {
+        lng.push(n.point().lng());
+    }
+
+    lng
+}
+
+
+pub fn get_time(ts: &TrackSegment) -> (std::vec::Vec<DateTime<Utc>>) {
+    let mut time = std::vec::Vec::new();
+
+    for n in &ts.points {
+        time.push(n.time.unwrap());
+    }
+
+    time
+}
+
+
+pub fn get_elevation(ts: &TrackSegment) -> (std::vec::Vec<f64>) {
+    let mut elev = std::vec::Vec::new();
+
+    for n in &ts.points {
+        elev.push(n.elevation.unwrap());
+    }
+
+    elev
+}
+
 
 #[cfg(test)]
 mod tests {
