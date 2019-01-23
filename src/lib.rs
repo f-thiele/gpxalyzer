@@ -20,10 +20,39 @@ extern crate gpx;
 use gpx::{Waypoint, TrackSegment};
 use chrono::{DateTime, Utc};
 
-pub fn decorate_speed(ts: &TrackSegment) -> Result<&TrackSegment, &'static str> {
-    for wp in &ts.points {
-        // println!("{:?}", wp);
+pub fn distance(a: &Waypoint, b: &Waypoint) -> f64 {
+    // use the haversine formula
+    let phi1 = a.point().lat();
+    let phi2 = b.point().lat();
+    let lambda1 = a.point().lng();
+    let lambda2 = b.point().lng();
+
+    let sphi = ((phi2-phi1)/2.).sin();
+    let slambda = ((lambda2-lambda1)/2.).sin();
+
+    let r = 6.3781*1e6;
+
+    let distance = 2.*r*((sphi.powi(2)+phi1.cos()*phi2.cos()*(slambda.powi(2)))).asin();
+
+    distance
+}
+
+pub fn decorate_speed(ts: &mut TrackSegment) -> Result<&mut TrackSegment, &'static str> {
+    for i in 0..ts.points.len()-1 {
+        if i == ts.points.len()-1 {
+            continue
+        }
+        let wp = &ts.points[i];
+        let nwp = &ts.points[i+1];
+        let distance = distance(wp, nwp);
+        let duration = nwp.time
+            .unwrap().
+            signed_duration_since(wp.time.unwrap())
+            .num_seconds() as f64;
+        ts.points[i].speed = Some(distance/duration);
+
     }
+
     return Ok(ts);
 }
 
@@ -92,6 +121,24 @@ pub fn get_time(ts: &TrackSegment) -> (std::vec::Vec<DateTime<Utc>>) {
     }
 
     time
+}
+
+
+pub fn get_speed(ts: &TrackSegment) -> (std::vec::Vec<f64>) {
+    let mut speed = std::vec::Vec::new();
+
+    for n in &ts.points {
+        let result = n.speed;
+        match result {
+            // The division was valid
+            Some(x) => speed.push(x),
+            // The division was invalid
+            None    => speed.push(0.),
+        }
+        ;
+    }
+
+    speed
 }
 
 
