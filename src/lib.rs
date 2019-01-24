@@ -38,12 +38,11 @@ pub fn distance(a: &Waypoint, b: &Waypoint) -> f64 {
 }
 
 pub fn decorate_speed(ts: &mut TrackSegment) -> Result<&mut TrackSegment, &'static str> {
-    for i in 0..ts.points.len()-1 {
-        if i == ts.points.len()-1 {
-            continue
-        }
+    let d_next_wp = 15;
+
+    for i in 0..ts.points.len()-d_next_wp-1 {
         let wp = &ts.points[i];
-        let nwp = &ts.points[i+1];
+        let nwp = &ts.points[i+d_next_wp];
         let distance = distance(wp, nwp);
         let duration = nwp.time
             .unwrap().
